@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Points SAP Privileges' webhook at altiward-forwarder. Works with SAP Privileges 2.4 or later.
+  Install it through your MDM, and before you do:
+
+  1. ServerAddress: your relay's URL. With URL secrets (FORWARDER_URL_SECRETS), add the
+     secret for these Macs: https://relay.example.com/v1/privileges/<secret>.
+  2. The Macs must trust the relay's server certificate. If a private CA issued it, put that
+     CA's certificate (DER, base64) in the com.apple.security.root payload. A root in a profile
+     installed by hand rather than by MDM isn't trusted for TLS on recent macOS, and Privileges
+     then fails at the TLS handshake and queues events instead of sending them.
+  3. Each Mac needs a client certificate issued by the CA in FORWARDER_CLIENT_CA_FILE. If your
+     Macs already have device certificates (Wi-Fi, VPN), point the relay at their CA and remove
+     the PKCS#12 payload. Otherwise use your MDM's SCEP or ACME payload; to use one shared
+     identity instead, put a PKCS#12 file (base64) and its password in the
+     com.apple.security.pkcs12 payload. docs/configuration.md#certificates has the details.
+     With URL secrets, remove the PKCS#12 payload: Macs need no client certificate.
+     PrivilegesAgent picks the identity whose issuer matches a CA name the relay sends, so the
+     identity's issuer must be that CA. It must be able to use the private key without a
+     prompt: keep AllowAllAppsAccess true, or grant PrivilegesAgent access another way.
+  4. Remove the payloads you don't use, and give each PayloadUUID a fresh value (uuidgen).
+
+  After it's installed, PrivilegesAgent reads the new settings when it next starts (at login,
+  or: launchctl kickstart -k gui/$(id -u)/corp.sap.privileges.agent).
+-->
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key><string>Altiward Forwarder (Privileges webhook)</string>
+  <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-remote-logging</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>7D3C2B9A-6F1E-4C58-9A0B-2E4D6F8A1C3B</string>
+  <key>PayloadVersion</key><integer>1</integer>
+  <key>PayloadScope</key><string>System</string>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>corp.sap.privileges</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-remote-logging.settings</string>
+      <key>PayloadUUID</key><string>4B8E1F2A-9C3D-4E6F-8A7B-1D2C3E4F5A6B</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>RemoteLogging</key>
+      <dict>
+        <key>ServerType</key><string>webhook</string>
+        <key>ServerAddress</key><string>https://relay.example.com:8443/v1/privileges</string>
+        <!-- Keep events Privileges couldn't send, and resend them (5, 15, 30 minutes, then hourly). -->
+        <key>QueueUnsentEvents</key><true/>
+        <key>QueuedEventsMax</key><integer>200</integer>
+      </dict>
+      <!-- Suggested, if your Privileges profile doesn't already set them: Privileges keeps a
+           reason only when it requires one, so without these no reason reaches your SIEM.
+      <key>ReasonRequired</key><true/>
+      <key>ReasonMinLength</key><integer>10</integer>
+      -->
+    </dict>
+    <dict>
+      <key>PayloadType</key><string>com.apple.security.root</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-remote-logging.server-ca</string>
+      <key>PayloadUUID</key><string>9E2A4C6B-1D3F-4A5B-8C7D-3F1E2D4C6B8A</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadCertificateFileName</key><string>relay-server-ca.cer</string>
+      <key>PayloadContent</key><data></data>
+    </dict>
+    <dict>
+      <key>PayloadType</key><string>com.apple.security.pkcs12</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-remote-logging.identity</string>
+      <key>PayloadUUID</key><string>2C4E6A8B-3D5F-4B7A-9C1E-5A7B9D1F3E2C</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadCertificateFileName</key><string>mac-client.p12</string>
+      <key>Password</key><string></string>
+      <key>AllowAllAppsAccess</key><true/>
+      <key>KeyIsExtractable</key><false/>
+      <key>PayloadContent</key><data></data>
+    </dict>
+  </array>
+</dict>
+</plist>

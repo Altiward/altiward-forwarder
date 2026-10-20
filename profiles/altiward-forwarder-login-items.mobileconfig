@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Managed login items (com.apple.servicemanagement): marks the hook's LaunchAgent, which
+  sends queued events every 5 minutes, as managed. Users then can't turn it off in System
+  Settings > General > Login Items & Extensions, and macOS doesn't show a "background items
+  added" notification. Deploy it before or with the package, through an MDM: macOS refuses
+  this payload in a profile installed by hand ("must originate from a user-approved MDM
+  server"), and with it the whole profile.
+-->
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key><string>Altiward Forwarder (managed background item)</string>
+  <key>PayloadIdentifier</key><string>com.altiward.forwarder.login-items</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>A4C6E8B1-2D3F-4A5C-9E7B-1C3D5F7A9B2E</string>
+  <key>PayloadVersion</key><integer>1</integer>
+  <key>PayloadScope</key><string>System</string>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.apple.servicemanagement</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.login-items.rules</string>
+      <key>PayloadUUID</key><string>B5D7F9C2-3E4A-4B6D-8F1A-2D4E6A8C1B3F</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>Rules</key>
+      <array>
+        <dict>
+          <key>RuleType</key><string>Label</string>
+          <key>RuleValue</key><string>com.altiward.forwarder.flush</string>
+          <key>Comment</key><string>altiward-forwarder-hook --flush LaunchAgent</string>
+        </dict>
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>

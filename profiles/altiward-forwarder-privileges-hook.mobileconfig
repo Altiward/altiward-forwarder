@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Makes SAP Privileges run altiward-forwarder-hook after each change. Works with SAP Privileges
+  2.5.3 or later (for the checksum). Use the copy each release publishes, which has the
+  released binary's SHA-256 filled in: Privileges runs the hook only when the file matches.
+
+  Privileges has one post-change setting. This profile replaces whatever else uses it,
+  including the Altiward agent's hook, so a Mac runs one or the other.
+-->
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key><string>Altiward Forwarder (Privileges hook)</string>
+  <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-hook</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>5F1A3C7E-2B4D-4E6A-9C8B-7D1E3F5A9B2C</string>
+  <key>PayloadVersion</key><integer>1</integer>
+  <key>PayloadScope</key><string>System</string>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>corp.sap.privileges</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.privileges-hook.settings</string>
+      <key>PayloadUUID</key><string>8B2D4F6A-1C3E-4A5B-9D7C-2E4F6A8B1D3C</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PostChangeExecutablePath</key><string>/Library/Application Support/Altiward Forwarder/Altiward Forwarder.app/Contents/MacOS/Altiward Forwarder</string>
+      <key>PostChangeExecutableChecksum</key><string>REPLACE_WITH_SHA256_OF_SIGNED_HOOK</string>
+      <key>PassReasonToExecutable</key><true/>
+      <!-- Suggested, if your Privileges profile doesn't already set them: Privileges keeps a
+           reason only when it requires one, so without these no reason reaches your SIEM.
+      <key>ReasonRequired</key><true/>
+      <key>ReasonMinLength</key><integer>10</integer>
+      -->
+    </dict>
+  </array>
+</dict>
+</plist>

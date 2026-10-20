@@ -1,0 +1,16 @@
+#!/bin/bash
+# Starts the flush LaunchAgent for each user logged in now; others get it at their next
+# login. Installer passes the target volume as $3; launchd is only touched when installing
+# onto the running system.
+set -euo pipefail
+LABEL=com.altiward.forwarder.flush
+VOLUME="${3:-/}"
+VOLUME="${VOLUME%/}"
+PLIST="$VOLUME/Library/LaunchAgents/$LABEL.plist"
+
+if [ -n "$VOLUME" ]; then exit 0; fi # not the running system
+for uid in $(ps -axo uid=,comm= | awk '$2 ~ /loginwindow$/ { print $1 }' | sort -u); do
+  launchctl bootout "gui/$uid/$LABEL" 2>/dev/null || true
+  launchctl bootstrap "gui/$uid" "$PLIST" || true
+done
+exit 0

@@ -1,0 +1,58 @@
+[
+  {
+    "activity_id": 1,
+    "activity_name": "Assign Privileges",
+    "category_name": "Identity \u0026 Access Management",
+    "category_uid": 3,
+    "class_name": "User Access Management",
+    "class_uid": 3005,
+    "device": {
+      "os": {
+        "name": "macOS",
+        "type": "macOS",
+        "type_id": 300
+      },
+      "uid": "8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D"
+    },
+    "message": "jdoe was granted admin rights on 8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D via SAP Privileges: Updating the VPN client",
+    "metadata": {
+      "labels": [
+        "delayed"
+      ],
+      "logged_time": 1792506187000,
+      "product": {
+        "name": "Altiward Forwarder",
+        "vendor_name": "Altiward",
+        "version": "0.0.0-test"
+      },
+      "uid": "6458ba3b-5067-59be-bd44-0e809d883fea",
+      "version": "1.9.0"
+    },
+    "privileges": [
+      "admin"
+    ],
+    "severity": "Informational",
+    "severity_id": 1,
+    "status": "Success",
+    "status_id": 1,
+    "time": 1792506187000,
+    "type_name": "User Access Management: Assign Privileges",
+    "type_uid": 300501,
+    "unmapped": {
+      "altiward": {
+        "custom_data": {
+          "site": "lab"
+        },
+        "event_type": "elevation.granted",
+        "expires_time": 1792506487000,
+        "reason": "Updating the VPN client",
+        "reported_by": "privileges_webhook",
+        "source": "privileges",
+        "verified": false
+      }
+    },
+    "user": {
+      "name": "jdoe"
+    }
+  }
+]

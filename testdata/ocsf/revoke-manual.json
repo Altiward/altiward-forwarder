@@ -1,0 +1,54 @@
+[
+  {
+    "activity_id": 2,
+    "activity_name": "Revoke Privileges",
+    "category_name": "Identity \u0026 Access Management",
+    "category_uid": 3,
+    "class_name": "User Access Management",
+    "class_uid": 3005,
+    "device": {
+      "os": {
+        "name": "macOS",
+        "type": "macOS",
+        "type_id": 300
+      },
+      "uid": "8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D"
+    },
+    "message": "jdoe's admin rights on 8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D were revoked via SAP Privileges: requested by user",
+    "metadata": {
+      "logged_time": 1792506378000,
+      "product": {
+        "name": "Altiward Forwarder",
+        "vendor_name": "Altiward",
+        "version": "0.0.0-test"
+      },
+      "uid": "ce484cd1-ef06-57ec-b81e-6d7abcb5e0b5",
+      "version": "1.9.0"
+    },
+    "privileges": [
+      "admin"
+    ],
+    "severity": "Informational",
+    "severity_id": 1,
+    "status": "Success",
+    "status_id": 1,
+    "time": 1792506378000,
+    "type_name": "User Access Management: Revoke Privileges",
+    "type_uid": 300502,
+    "unmapped": {
+      "altiward": {
+        "custom_data": {
+          "site": "lab"
+        },
+        "event_type": "elevation.revoked",
+        "reason": "requested by user",
+        "reported_by": "privileges_webhook",
+        "source": "privileges",
+        "verified": false
+      }
+    },
+    "user": {
+      "name": "jdoe"
+    }
+  }
+]

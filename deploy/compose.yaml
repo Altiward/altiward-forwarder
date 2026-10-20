@@ -1,0 +1,25 @@
+# The relay in direct mode: it terminates TLS itself and requires each Mac's client
+# certificate. Next to this file, put:
+#   .env    FORWARDER_VERSION and the destination settings (docs/configuration.md)
+#   certs/  server.pem and server.key (the relay's certificate) and ca.pem (the CA that
+#           issued the Macs' certificates), readable by uid 65532
+#
+#   docker compose up -d
+services:
+  relay:
+    image: ghcr.io/altiward/altiward-forwarder:${FORWARDER_VERSION:?set FORWARDER_VERSION in .env}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      FORWARDER_TLS_CERT_FILE: /certs/server.pem
+      FORWARDER_TLS_KEY_FILE: /certs/server.key
+      FORWARDER_CLIENT_CA_FILE: /certs/ca.pem
+    ports:
+      - "8443:8443"
+    volumes:
+      - spool:/var/lib/altiward-forwarder
+      - ./certs:/certs:ro
+
+volumes:
+  # Events wait here until each SIEM has accepted them, so they survive a restart.
+  spool:

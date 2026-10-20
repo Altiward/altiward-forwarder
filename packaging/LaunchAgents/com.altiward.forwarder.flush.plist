@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Sends the hook's queued events, as each logged-in user, at login and every 5 minutes. -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.altiward.forwarder.flush</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Library/Application Support/Altiward Forwarder/Altiward Forwarder.app/Contents/MacOS/Altiward Forwarder</string>
+        <string>--flush</string>
+    </array>
+    <!-- Shown in Login Items as Altiward Forwarder, with its icon. -->
+    <key>AssociatedBundleIdentifiers</key>
+    <array>
+        <string>com.altiward.forwarder.hook</string>
+    </array>
+    <key>StartInterval</key><integer>300</integer>
+    <key>RunAtLoad</key><true/>
+    <key>ProcessType</key><string>Background</string>
+    <key>LimitLoadToSessionType</key><string>Aqua</string>
+</dict>
+</plist>

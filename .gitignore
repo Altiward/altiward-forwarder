@@ -1,0 +1,5 @@
+# A local workspace pointing at an altiward checkout (see CONTRIBUTING.md)
+go.work
+go.work.sum
+/bin/
+/dist/

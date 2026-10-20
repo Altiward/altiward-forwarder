@@ -1,0 +1,55 @@
+name: Bug report
+description: The forwarder doesn't work as it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. For a security problem, please don't open an issue:
+        see the [security policy](https://github.com/Altiward/.github/blob/main/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: How you forward
+      options:
+        - The relay (altiward-forwarder)
+        - The on-Mac hook (altiward-forwarder-hook)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Forwarder version
+      description: "`altiward-forwarder version`, or the hook package version."
+    validations:
+      required: true
+  - type: input
+    id: privileges
+    attributes:
+      label: SAP Privileges version
+    validations:
+      required: true
+  - type: dropdown
+    id: siem
+    attributes:
+      label: Where events go
+      multiple: true
+      options:
+        - Splunk
+        - Microsoft Sentinel
+        - Syslog
+        - Standard output
+        - A webhook (hook only)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The forwarder's log around the problem. Remove tokens, secrets, user names and host names first.
+      render: text

@@ -1,0 +1,136 @@
+name: Release relay
+
+# Builds a relay release when a vX.Y.Z tag is pushed: the image for amd64 and arm64 with
+# provenance and an SBOM, pushed to the public ghcr.io package and signed; the same image
+# saved per platform for docker load; the compose file and the Privileges profile; the
+# release notes from CHANGELOG.md; and SHA256SUMS over all of it, signed so anyone can check
+# the files without registry access. The last job publishes them on GitHub Releases; a
+# release candidate (vX.Y.Z-rc.N) is marked a pre-release.
+#
+# No secrets: the registry login uses GITHUB_TOKEN, and signing is keyless, using this
+# workflow's GitHub identity, recorded in Sigstore's public transparency log.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # push to ghcr.io
+      id-token: write # keyless signing
+    # A maintainer approves before anything is pushed or signed. Its own environment, with no
+    # secrets: the Apple signing secrets live only in release-hook.
+    environment: release-relay
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+
+      - name: Version from the tag
+        id: version
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          [[ "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]] || { echo "tag must be vX.Y.Z or vX.Y.Z-rc.N, got $GITHUB_REF_NAME"; exit 1; }
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/altiward-forwarder"
+          out="$RUNNER_TEMP/release"
+          { echo "VERSION=$v"; echo "IMAGE=$image"; echo "OUT=$out"; } >> "$GITHUB_ENV"
+          { echo "version=$v"; echo "image=$image"; echo "out=$out"; } >> "$GITHUB_OUTPUT"
+
+      - name: Release notes (refuses a version without a dated CHANGELOG section)
+        run: |
+          mkdir -p "$OUT"
+          scripts/release-notes.sh relay "$VERSION" > "$OUT/RELEASE_NOTES.md"
+
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache: false # a release builds from nothing a cache could have changed
+      - name: Tests
+        run: make lint test deps-check
+
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Users pin a version; there is deliberately no "latest" tag.
+      - id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          build-args: VERSION=${{ steps.version.outputs.version }}
+          tags: ${{ steps.version.outputs.image }}:${{ steps.version.outputs.version }}
+          push: true
+          provenance: mode=max
+          sbom: true
+
+      - uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+      - name: Sign the image and check the signature
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          cosign sign --yes "$IMAGE@$DIGEST"
+          cosign verify "$IMAGE@$DIGEST" \
+            --certificate-identity "https://github.com/$GITHUB_REPOSITORY/.github/workflows/release.yml@$GITHUB_REF" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com > /dev/null
+
+      # Pulled back from the registry, so the files are the signed image, bit for bit.
+      - name: Image files for docker load
+        run: |
+          for arch in amd64 arm64; do
+            docker pull --platform "linux/$arch" "$IMAGE:$VERSION"
+            docker save "$IMAGE:$VERSION" | gzip -9 > "$OUT/altiward-forwarder-$VERSION-linux-$arch.tar.gz"
+            docker rmi "$IMAGE:$VERSION"
+          done
+
+      - name: Compose file and profile
+        run: cp deploy/compose.yaml profiles/altiward-forwarder-privileges-webhook.mobileconfig "$OUT/"
+
+      - name: Sign the checksums and check the signature
+        working-directory: ${{ steps.version.outputs.out }}
+        run: |
+          sha256sum -- *.tar.gz compose.yaml altiward-forwarder-privileges-webhook.mobileconfig RELEASE_NOTES.md > SHA256SUMS
+          cosign sign-blob --yes --bundle SHA256SUMS.sigstore.json SHA256SUMS
+          cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity "https://github.com/$GITHUB_REPOSITORY/.github/workflows/release.yml@$GITHUB_REF" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com SHA256SUMS
+          sha256sum -c SHA256SUMS
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: altiward-forwarder-${{ steps.version.outputs.version }}
+          path: ${{ steps.version.outputs.out }}/*
+          retention-days: 90
+
+  # Publishes the signed files. The only job that can write to the repository.
+  publish:
+    needs: image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the release
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: altiward-forwarder-${{ needs.image.outputs.version }}
+          path: files
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          flags=()
+          if [[ "$TAG" == *-rc.* ]]; then flags+=(--prerelease); fi
+          gh release create "$TAG" files/* \
+            --verify-tag --title "Relay $TAG" --notes-file files/RELEASE_NOTES.md "${flags[@]}"

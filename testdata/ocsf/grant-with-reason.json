@@ -1,0 +1,55 @@
+[
+  {
+    "activity_id": 1,
+    "activity_name": "Assign Privileges",
+    "category_name": "Identity \u0026 Access Management",
+    "category_uid": 3,
+    "class_name": "User Access Management",
+    "class_uid": 3005,
+    "device": {
+      "os": {
+        "name": "macOS",
+        "type": "macOS",
+        "type_id": 300
+      },
+      "uid": "8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D"
+    },
+    "message": "jdoe was granted admin rights on 8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D via SAP Privileges: Installing a printer driver",
+    "metadata": {
+      "logged_time": 1792506383000,
+      "product": {
+        "name": "Altiward Forwarder",
+        "vendor_name": "Altiward",
+        "version": "0.0.0-test"
+      },
+      "uid": "fa6b4e84-51f2-5ff6-a5c1-5b1f69ffeaec",
+      "version": "1.9.0"
+    },
+    "privileges": [
+      "admin"
+    ],
+    "severity": "Informational",
+    "severity_id": 1,
+    "status": "Success",
+    "status_id": 1,
+    "time": 1792506383000,
+    "type_name": "User Access Management: Assign Privileges",
+    "type_uid": 300501,
+    "unmapped": {
+      "altiward": {
+        "custom_data": {
+          "site": "lab"
+        },
+        "event_type": "elevation.granted",
+        "expires_time": 1792506683000,
+        "reason": "Installing a printer driver",
+        "reported_by": "privileges_webhook",
+        "source": "privileges",
+        "verified": false
+      }
+    },
+    "user": {
+      "name": "jdoe"
+    }
+  }
+]

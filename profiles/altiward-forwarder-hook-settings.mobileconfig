@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Where altiward-forwarder-hook sends events (the com.altiward.forwarder settings). Fill in one
+  or more destinations and delete the keys you don't use; a key left empty is ignored.
+
+  Any local user can read managed preferences, so use credentials that can only write:
+    - Splunk: an HTTP Event Collector token limited to one index.
+    - Sentinel: an app registration whose only role is Monitoring Metrics Publisher on the
+      one data collection rule.
+    - Webhook: a token your collector accepts for writing events only.
+
+  QueueMax is how many events the hook keeps per destination while it can't reach it
+  (default 500); beyond that it drops the oldest and says how many in the next event.
+-->
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key><string>Altiward Forwarder (hook settings)</string>
+  <key>PayloadIdentifier</key><string>com.altiward.forwarder.hook-settings</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>3E5A7C9B-4D6F-4B8A-8E1C-6F2A4B6D8E1F</string>
+  <key>PayloadVersion</key><integer>1</integer>
+  <key>PayloadScope</key><string>System</string>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.altiward.forwarder</string>
+      <key>PayloadIdentifier</key><string>com.altiward.forwarder.hook-settings.settings</string>
+      <key>PayloadUUID</key><string>6A8C1E3F-5B7D-4C9A-8F2E-1A3C5E7B9D2F</string>
+      <key>PayloadVersion</key><integer>1</integer>
+
+      <key>SplunkHECURL</key><string></string> <!-- e.g. https://splunk.example.com:8088 -->
+      <key>SplunkHECToken</key><string></string>
+
+      <key>SentinelEndpoint</key><string></string> <!-- the rule's logs ingestion URL -->
+      <key>SentinelDCRID</key><string></string> <!-- dcr-… -->
+      <key>SentinelStream</key><string>Custom-AltiwardOCSF</string>
+      <key>SentinelTenantID</key><string></string>
+      <key>SentinelClientID</key><string></string>
+      <key>SentinelClientSecret</key><string></string>
+
+      <key>WebhookURL</key><string></string> <!-- https only -->
+      <key>WebhookHeaders</key><dict>
+        <!-- <key>Authorization</key><string>Bearer …</string> -->
+      </dict>
+
+      <!-- PEM text of CA certificates to trust, besides the system's, when a destination's
+           certificate comes from a private CA (common for an on-premises Splunk). -->
+      <key>TrustedCAs</key><string></string>
+
+      <key>QueueMax</key><integer>500</integer>
+    </dict>
+  </array>
+</dict>
+</plist>

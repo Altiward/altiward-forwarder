@@ -1,0 +1,54 @@
+[
+  {
+    "activity_id": 2,
+    "activity_name": "Revoke Privileges",
+    "category_name": "Identity \u0026 Access Management",
+    "category_uid": 3,
+    "class_name": "User Access Management",
+    "class_uid": 3005,
+    "device": {
+      "os": {
+        "name": "macOS",
+        "type": "macOS",
+        "type_id": 300
+      },
+      "uid": "8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D"
+    },
+    "message": "jdoe's admin rights on 8A1B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D were revoked via SAP Privileges: privileges expired",
+    "metadata": {
+      "logged_time": 1792506684000,
+      "product": {
+        "name": "Altiward Forwarder",
+        "vendor_name": "Altiward",
+        "version": "0.0.0-test"
+      },
+      "uid": "4ca5d68c-f0e9-5388-bd30-243cba31b078",
+      "version": "1.9.0"
+    },
+    "privileges": [
+      "admin"
+    ],
+    "severity": "Informational",
+    "severity_id": 1,
+    "status": "Success",
+    "status_id": 1,
+    "time": 1792506684000,
+    "type_name": "User Access Management: Revoke Privileges",
+    "type_uid": 300502,
+    "unmapped": {
+      "altiward": {
+        "custom_data": {
+          "site": "lab"
+        },
+        "event_type": "elevation.revoked",
+        "reason": "privileges expired",
+        "reported_by": "privileges_webhook",
+        "source": "privileges",
+        "verified": false
+      }
+    },
+    "user": {
+      "name": "jdoe"
+    }
+  }
+]

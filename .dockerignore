@@ -1,0 +1,11 @@
+# Only the Go sources and the licence files go into the image.
+*
+!go.mod
+!go.sum
+!LICENSE
+!NOTICE
+!doc.go
+!cmd/
+!internal/
+**/*_test.go
+**/testdata/
