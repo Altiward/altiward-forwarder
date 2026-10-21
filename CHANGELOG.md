@@ -5,7 +5,7 @@ hook (`altiward-forwarder-hook`, released as `hook-vX.Y.Z`). A release needs its
 (`## Relay X.Y.Z - YYYY-MM-DD`) with a `### Changes` heading; `scripts/release-notes.sh`
 checks.
 
-## Relay 0.1.0 - unreleased
+## Relay 0.1.0 - 2026-10-21
 
 ### Changes
 
@@ -16,7 +16,7 @@ checks.
 - Requires each Mac's client certificate, either itself or through a proxy's
   `X-Forwarded-Client-Cert` header.
 
-## Hook 0.1.0 - unreleased
+## Hook 0.1.0 - 2026-10-21
 
 ### Changes
 
