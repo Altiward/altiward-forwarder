@@ -2,7 +2,7 @@
 # docker build --build-arg VERSION=0.1.0 -t altiward-forwarder .
 
 # Base images are pinned by digest; Dependabot proposes updates.
-FROM golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59 AS build
+FROM golang:1.27-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c58525ec9d8170fd AS build
 ARG VERSION=dev
 WORKDIR /src
 COPY go.mod go.sum* ./

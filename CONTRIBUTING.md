@@ -5,7 +5,7 @@ larger change, open an issue first so we can agree on the approach before you wr
 
 ## Set up
 
-You need Go 1.25 or later. The forwarder's only dependency outside the standard library is
+You need Go 1.27 or later. The forwarder's only dependency outside the standard library is
 the SIEM client module from the main Altiward repository,
 `github.com/Altiward/altiward/integrations`, and `make deps-check` keeps it that way.
 
