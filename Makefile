@@ -1,4 +1,4 @@
-.PHONY: help lint test deps-check hook hook-verify
+.PHONY: help lint test deps-check vulncheck hook hook-verify
 
 help: ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -15,6 +15,9 @@ deps-check: ## Fail if any package builds against a module outside github.com/Al
 	@mods=$$(go list -deps -test -f '{{with .Module}}{{.Path}}{{end}}' ./...) || exit 1; \
 	out=$$(echo "$$mods" | sort -u | grep -v -e '^github.com/Altiward/' -e '^$$'); \
 	test -z "$$out" || (echo "third-party modules aren't allowed:"; echo "$$out"; exit 1)
+
+vulncheck: ## Check the code and the Go toolchain against Go's vulnerability database
+	go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
 
 hook: ## Build the hook package, ad hoc signed (packaging/build.sh; VERSION=… to set one)
 	packaging/build.sh
