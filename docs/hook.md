@@ -4,8 +4,9 @@
 server to run the relay on. Privileges runs it after each grant and revoke; it sends the change
 to Splunk, Microsoft Sentinel or an HTTPS webhook as an OCSF record.
 
-Prefer [the relay](../README.md#quick-start-the-relay) if you can host it: it gets the expiry
-time, keeps SIEM credentials off the Macs, and works alongside the Altiward agent.
+[The relay](../README.md#quick-start-the-relay) is the other option. It needs a host, but it
+gets the expiry time, keeps SIEM credentials off the Macs, and works alongside the Altiward
+agent. The hook needs nothing hosted and no certificates.
 
 ## What it does with each change
 

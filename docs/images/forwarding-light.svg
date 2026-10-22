@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 516" width="1000" height="516" role="img" aria-labelledby="title desc">
-  <title id="title">How altiward-forwarder sends SAP Privileges events</title>
-  <desc id="desc">With the relay: on each Mac, SAP Privileges sends a webhook for each change and queues what it can't send. The webhook goes over HTTPS, with a client certificate, to the relay on your host. The relay checks each Mac's certificate, maps each change to OCSF and stores it on disk before it answers, then sends it to your SIEM (Splunk, Microsoft Sentinel or syslog) as OCSF or CEF over HTTPS or TLS. With the hook: on each Mac, SAP Privileges runs the hook as the user on each change. The hook checks the admin group, queues events until they are sent, and holds the SIEM token. It sends OCSF over HTTPS straight to Splunk, Microsoft Sentinel or an HTTPS webhook, with the SIEM token on every Mac.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 632" width="1000" height="632" role="img" aria-labelledby="title desc">
+  <title id="title">Two ways altiward-forwarder sends SAP Privileges events</title>
+  <desc id="desc">Two options; use one or the other. The relay: on each Mac, SAP Privileges sends a webhook for each change and queues what it can't send. The webhook goes over HTTPS, with a client certificate, to the relay on your host. The relay checks each Mac's certificate, maps each change to OCSF and stores it on disk before it answers, then sends it to Splunk, Microsoft Sentinel or syslog as OCSF or CEF over HTTPS or TLS. Or the on-Mac hook: on each Mac, SAP Privileges runs the hook as the user on each change. The hook checks the admin group, queues events until they are sent, and holds the SIEM token. It sends OCSF over HTTPS straight from each Mac to Splunk, Microsoft Sentinel or an HTTPS webhook, with the SIEM token on every Mac.</desc>
   <style>
     text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; fill: #111111; }
+    .option { font-size: 17px; font-weight: 700; }
     .title { font-size: 15px; font-weight: 600; }
     .name { font-size: 14px; font-weight: 600; }
     .note { fill: #585858; }
     .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; fill: #585858; }
+    .frame { fill: none; stroke: #d6d6d6; stroke-width: 1; }
     .group { fill: #f3f3f3; }
     .box { fill: #ffffff; stroke: #808080; stroke-width: 1; }
     .outside { fill: #ffffff; stroke: #808080; stroke-width: 1; stroke-dasharray: 4 3; }
@@ -22,64 +24,78 @@
       <rect x="12" y="0" width="6" height="4.5" fill="#ff8a1f"/>
     </g>
   </defs>
-  <rect width="1000" height="516" fill="#ffffff"/>
+  <rect width="1000" height="632" fill="#ffffff"/>
 
-  <!-- Each Mac, with the relay -->
-  <rect class="group" x="24" y="24" width="248" height="128" rx="10"/>
-  <text class="title" x="40" y="48">Each Mac, with the relay</text>
-  <rect class="box" x="40" y="64" width="216" height="72" rx="8"/>
-  <text class="name" x="56" y="86">SAP Privileges</text>
-  <text class="note" x="56" y="106">a webhook for each change</text>
-  <text class="note" x="56" y="125">queues what it can't send</text>
+  <!-- Option: the relay -->
+  <rect class="frame" x="16" y="16" width="968" height="240" rx="14"/>
+  <text class="option" x="32" y="44">The relay</text>
 
-  <!-- The relay -->
-  <rect class="group" x="408" y="24" width="288" height="176" rx="10"/>
-  <text class="title" x="424" y="48">The relay, on your host</text>
-  <rect class="box" x="424" y="64" width="256" height="120" rx="8"/>
-  <use href="#mark" x="440" y="74"/>
-  <text class="name" x="466" y="86">Forwarder relay</text>
-  <text class="note" x="440" y="108">checks each Mac's certificate</text>
-  <text class="note" x="440" y="127">maps each change to OCSF</text>
-  <text class="note" x="440" y="146">stores it on disk, then answers</text>
-  <text class="mono" x="440" y="168">altiward-forwarder</text>
+  <rect class="group" x="32" y="60" width="240" height="128" rx="10"/>
+  <text class="title" x="48" y="84">Each Mac</text>
+  <rect class="box" x="48" y="100" width="208" height="72" rx="8"/>
+  <text class="name" x="64" y="122">SAP Privileges</text>
+  <text class="note" x="64" y="142">a webhook for each change</text>
+  <text class="note" x="64" y="161">queues what it can't send</text>
 
-  <path class="flow" d="M256 100 H422"/>
-  <text class="mono" x="340" y="72" text-anchor="middle">HTTPS webhook</text>
-  <text class="mono" x="340" y="87" text-anchor="middle">client certificate</text>
-  <path class="flow" d="M680 142 H790"/>
-  <text class="mono" x="744" y="114" text-anchor="middle">OCSF or CEF</text>
-  <text class="mono" x="744" y="129" text-anchor="middle">HTTPS or TLS</text>
+  <rect class="group" x="408" y="60" width="288" height="180" rx="10"/>
+  <text class="title" x="424" y="84">Your host</text>
+  <rect class="box" x="424" y="100" width="256" height="124" rx="8"/>
+  <use href="#mark" x="440" y="110"/>
+  <text class="name" x="466" y="122">Forwarder relay</text>
+  <text class="note" x="440" y="144">checks each Mac's certificate</text>
+  <text class="note" x="440" y="163">maps each change to OCSF</text>
+  <text class="note" x="440" y="182">stores it on disk, then answers</text>
+  <text class="mono" x="440" y="206">altiward-forwarder</text>
 
-  <!-- Each Mac, with the hook -->
-  <rect class="group" x="24" y="232" width="248" height="260" rx="10"/>
-  <text class="title" x="40" y="256">Each Mac, with the hook</text>
-  <rect class="box" x="40" y="272" width="216" height="52" rx="8"/>
-  <text class="name" x="56" y="294">SAP Privileges</text>
-  <text class="note" x="56" y="313">runs the hook on each change</text>
-  <path class="flow" d="M148 324 V354"/>
-  <text class="mono" x="158" y="344">as the user</text>
-  <rect class="box" x="40" y="356" width="216" height="120" rx="8"/>
-  <use href="#mark" x="56" y="370"/>
-  <text class="name" x="82" y="382">Forwarder hook</text>
-  <text class="note" x="56" y="404">checks the admin group</text>
-  <text class="note" x="56" y="423">queues events until sent</text>
-  <text class="note" x="56" y="442">holds the SIEM token</text>
-  <text class="mono" x="56" y="464">altiward-forwarder-hook</text>
+  <rect class="group" x="792" y="60" width="176" height="180" rx="10"/>
+  <text class="title" x="808" y="84">Your SIEM</text>
+  <rect class="box" x="808" y="100" width="144" height="36" rx="8"/>
+  <text x="824" y="123">Splunk</text>
+  <rect class="box" x="808" y="144" width="144" height="36" rx="8"/>
+  <text x="824" y="167">Microsoft Sentinel</text>
+  <rect class="box" x="808" y="188" width="144" height="36" rx="8"/>
+  <text x="824" y="211">Syslog</text>
 
-  <path class="flow" d="M256 416 H744 V298 H790"/>
-  <text class="mono" x="500" y="404" text-anchor="middle">OCSF over HTTPS, with the SIEM token on every Mac</text>
+  <path class="flow" d="M256 136 H422"/>
+  <text class="mono" x="340" y="108" text-anchor="middle">HTTPS webhook</text>
+  <text class="mono" x="340" y="123" text-anchor="middle">client certificate</text>
+  <path class="flow" d="M680 162 H790"/>
+  <text class="mono" x="744" y="134" text-anchor="middle">OCSF or CEF</text>
+  <text class="mono" x="744" y="149" text-anchor="middle">HTTPS or TLS</text>
 
-  <!-- Your SIEM -->
-  <rect class="group" x="792" y="84" width="184" height="256" rx="10"/>
-  <text class="title" x="808" y="108">Your SIEM</text>
-  <rect class="box" x="808" y="124" width="152" height="36" rx="8"/>
-  <text x="824" y="147">Splunk</text>
-  <rect class="box" x="808" y="168" width="152" height="36" rx="8"/>
-  <text x="824" y="191">Microsoft Sentinel</text>
-  <rect class="box" x="808" y="212" width="152" height="52" rx="8"/>
-  <text x="824" y="234">Syslog</text>
-  <text class="note" x="824" y="253">from the relay</text>
-  <rect class="box" x="808" y="272" width="152" height="52" rx="8"/>
-  <text x="824" y="294">HTTPS webhook</text>
-  <text class="note" x="824" y="313">from the hook</text>
+  <!-- Or -->
+  <rect class="box" x="476" y="262" width="48" height="28" rx="14"/>
+  <text class="name" x="500" y="281" text-anchor="middle">or</text>
+
+  <!-- Option: the on-Mac hook -->
+  <rect class="frame" x="16" y="296" width="968" height="320" rx="14"/>
+  <text class="option" x="32" y="324">The on-Mac hook</text>
+
+  <rect class="group" x="32" y="340" width="240" height="260" rx="10"/>
+  <text class="title" x="48" y="364">Each Mac</text>
+  <rect class="box" x="48" y="380" width="208" height="52" rx="8"/>
+  <text class="name" x="64" y="402">SAP Privileges</text>
+  <text class="note" x="64" y="421">runs the hook on each change</text>
+  <path class="flow" d="M152 432 V462"/>
+  <text class="mono" x="162" y="452">as the user</text>
+  <rect class="box" x="48" y="464" width="208" height="120" rx="8"/>
+  <use href="#mark" x="64" y="478"/>
+  <text class="name" x="90" y="490">Forwarder hook</text>
+  <text class="note" x="64" y="512">checks the admin group</text>
+  <text class="note" x="64" y="531">queues events until sent</text>
+  <text class="note" x="64" y="550">holds the SIEM token</text>
+  <text class="mono" x="64" y="572">altiward-forwarder-hook</text>
+
+  <rect class="group" x="792" y="420" width="176" height="180" rx="10"/>
+  <text class="title" x="808" y="444">Your SIEM</text>
+  <rect class="box" x="808" y="460" width="144" height="36" rx="8"/>
+  <text x="824" y="483">Splunk</text>
+  <rect class="box" x="808" y="504" width="144" height="36" rx="8"/>
+  <text x="824" y="527">Microsoft Sentinel</text>
+  <rect class="box" x="808" y="548" width="144" height="36" rx="8"/>
+  <text x="824" y="571">HTTPS webhook</text>
+
+  <path class="flow" d="M256 522 H790"/>
+  <text class="mono" x="524" y="510" text-anchor="middle">OCSF over HTTPS, straight from each Mac</text>
+  <text class="mono" x="524" y="544" text-anchor="middle">with the SIEM token on every Mac</text>
 </svg>
