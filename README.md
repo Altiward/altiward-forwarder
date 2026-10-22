@@ -13,6 +13,11 @@ detections, the Sentinel workbook and the Splunk dashboard work with both.
 
 ## Choose how to forward
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/forwarding-dark.svg">
+  <img src="docs/images/forwarding-light.svg" width="1000" alt="With the relay, SAP Privileges on each Mac sends a webhook for each change, over HTTPS with a client certificate, and queues what it can't send. The relay, on your host, checks each Mac's certificate, maps each change to OCSF and stores it on disk before it answers, then sends it to Splunk, Microsoft Sentinel or syslog as OCSF or CEF over HTTPS or TLS. With the hook, SAP Privileges runs the hook as the user on each change. The hook checks the admin group, queues events until they are sent, and sends OCSF over HTTPS straight to Splunk, Microsoft Sentinel or an HTTPS webhook, with the SIEM token on every Mac.">
+</picture>
+
 | | Privileges' own syslog | The relay (recommended) | The on-Mac hook |
 |---|---|---|---|
 | What runs where | Nothing to install: Privileges sends syslog itself | A small container you host; each Mac's Privileges sends it a webhook | A binary on each Mac, run by Privileges after each change |
