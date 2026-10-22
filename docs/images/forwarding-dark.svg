@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 632" width="1000" height="632" role="img" aria-labelledby="title desc">
   <title id="title">Two ways altiward-forwarder sends SAP Privileges events</title>
-  <desc id="desc">Two options; use one or the other. The relay, recommended: on each Mac, SAP Privileges sends a webhook for each change and queues what it can't send. The webhook goes over HTTPS, with a client certificate, to the relay on your host. The relay checks each Mac's certificate, maps each change to OCSF and stores it on disk before it answers, then sends it to Splunk, Microsoft Sentinel or syslog as OCSF or CEF over HTTPS or TLS. Or the on-Mac hook: on each Mac, SAP Privileges runs the hook as the user on each change. The hook checks the admin group, queues events until they are sent, and holds the SIEM token. It sends OCSF over HTTPS straight from each Mac to Splunk, Microsoft Sentinel or an HTTPS webhook, with the SIEM token on every Mac.</desc>
+  <desc id="desc">Two options; use one or the other. The relay: on each Mac, SAP Privileges sends a webhook for each change and queues what it can't send. The webhook goes over HTTPS, with a client certificate, to the relay on your host. The relay checks each Mac's certificate, maps each change to OCSF and stores it on disk before it answers, then sends it to Splunk, Microsoft Sentinel or syslog as OCSF or CEF over HTTPS or TLS. Or the on-Mac hook: on each Mac, SAP Privileges runs the hook as the user on each change. The hook checks the admin group, queues events until they are sent, and holds the SIEM token. It sends OCSF over HTTPS straight from each Mac to Splunk, Microsoft Sentinel or an HTTPS webhook, with the SIEM token on every Mac.</desc>
   <style>
     text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; fill: #f2f2f2; }
     .option { font-size: 17px; font-weight: 700; }
@@ -28,7 +28,7 @@
 
   <!-- Option: the relay -->
   <rect class="frame" x="16" y="16" width="968" height="240" rx="14"/>
-  <text class="option" x="32" y="44">The relay <tspan class="note" font-weight="400">(recommended)</tspan></text>
+  <text class="option" x="32" y="44">The relay</text>
 
   <rect class="group" x="32" y="60" width="240" height="128" rx="10"/>
   <text class="title" x="48" y="84">Each Mac</text>
