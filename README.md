@@ -9,7 +9,8 @@ SIEM an OCSF record: the same record the [Altiward](https://github.com/Altiward/
 emits for that change. So the [altiward-siem](https://github.com/Altiward/altiward-siem)
 detections, the Sentinel workbook and the Splunk dashboard work with both.
 
-**Status:** under development; there is no release yet.
+**Status:** 0.1.0, the first [release](https://github.com/Altiward/altiward-forwarder/releases)
+of both the relay (`v0.1.0`) and the hook (`hook-v0.1.0`).
 
 ## Choose how to forward
 
