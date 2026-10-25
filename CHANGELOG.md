@@ -9,6 +9,8 @@ checks.
 
 ### Changes
 
+- Splunk delivery requires an explicit accepted HEC acknowledgement. Redirects, HTML,
+  incomplete or invalid responses leave records queued and report a delivery error.
 - Event identifiers preserve subsecond timestamps, separate configured sites and distinguish
   changes in reason, expiry or custom data within a whole second. Exact retries still share
   an identifier, including delayed delivery. Newly generated identifiers change after the
@@ -19,6 +21,8 @@ checks.
 
 ### Changes
 
+- Splunk delivery requires an explicit accepted HEC acknowledgement. Redirects, HTML,
+  incomplete or invalid responses leave records queued and report a delivery error.
 - Every observed membership transition receives its own identity before queuing, so repeated
   clock values cannot merge separate changes. Resending a queued record retains its identity.
 

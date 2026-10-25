@@ -7,5 +7,6 @@
 !doc.go
 !cmd/
 !internal/
+!vendor/
 **/*_test.go
 **/testdata/

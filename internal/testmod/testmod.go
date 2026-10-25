@@ -4,6 +4,7 @@
 package testmod
 
 import (
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -14,12 +15,26 @@ import (
 func IntegrationsFile(t testing.TB, rel string) string {
 	t.Helper()
 	out, err := exec.Command("go", "list", "-m", "-f", "{{.Dir}}", "github.com/Altiward/altiward/integrations").Output()
-	if err != nil {
-		t.Fatalf("find the integrations module: %v", err)
-	}
 	dir := strings.TrimSpace(string(out))
-	if dir == "" {
-		t.Fatal("the integrations module isn't downloaded: run go mod download")
+	if err == nil && dir != "" {
+		return filepath.Join(dir, filepath.FromSlash(rel))
 	}
-	return filepath.Join(dir, filepath.FromSlash(rel))
+	// A standalone release uses the reviewed vendored clients and their pinned contract
+	// fixtures. Find the module root from any package test directory.
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for dir := cwd; ; dir = filepath.Dir(dir) {
+		candidate := filepath.Join(dir, "vendor/github.com/Altiward/altiward/integrations", filepath.FromSlash(rel))
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+		if filepath.Dir(dir) == dir {
+			break
+		}
+	}
+	t.Fatal("integrations contract fixture is absent from the workspace and vendor directory")
+	return ""
+
 }

@@ -1,0 +1,5 @@
+# github.com/Altiward/altiward/integrations v0.1.0
+## explicit; go 1.25.0
+github.com/Altiward/altiward/integrations/sentinel
+github.com/Altiward/altiward/integrations/splunk
+github.com/Altiward/altiward/integrations/syslog
