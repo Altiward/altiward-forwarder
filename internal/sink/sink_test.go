@@ -122,6 +122,7 @@ func TestSentinelRowFields(t *testing.T) {
 	want := map[string]any{
 		"ClassUid": 3005.0, "ActivityId": 1.0, "SeverityId": 1.0, "TenantUid": "acme", "SessionUid": "",
 		"DeviceSerial": "C02XK0AAJGH5", "UserName": "jdoe", "TimeGenerated": "2026-10-20T14:26:23Z",
+		"EventUid": ocsf.Str(spooled(t, "C02XK0AAJGH5"), "metadata", "uid"),
 	}
 	for k, v := range want {
 		if row[k] != v {

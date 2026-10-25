@@ -34,11 +34,30 @@ the others. A sender sends the oldest records first, deletes each only after the
 it, and waits 30 seconds after a failure, doubling up to an hour. A record that can't be read
 back is renamed `<uid>.json.corrupt`, logged, counted in `/healthz`, and skipped.
 
-Each record's `metadata.uid` is derived from the Mac, the change, its time and the user. A
-change Privileges sends again while the first copy is still queued is stored once. Delivery is
+Each record's `metadata.uid` is a UUID derived from a versioned structured identity: the
+source, tenant, URL-secret name (when used), Mac, user, change, full timestamp precision,
+reason, expiry and custom data. Secret values never enter the identity, and rotating a URL
+secret under the same name keeps retry IDs stable. Keep each independent site's name stable
+and unique. Receipt time, product version and the `delayed` flag are excluded, so a delayed
+retry and reordered JSON object keys keep the same ID. A change Privileges sends again while
+the first copy is still queued is stored once. Delivery is
 at least once, though: if the relay's answer is lost after the event reached a SIEM,
 Privileges sends it again and the SIEM gets a second copy with the same `metadata.uid`
 (`EventUid` in Sentinel). Deduplicate on that ID where it matters.
+
+Privileges' webhook has no occurrence ID. Two reports with identical source fields and
+timestamps are indistinguishable from a retry, even if two real changes happened in the same
+whole second. They share an ID. Different reasons, expiries or custom data distinguish
+whole-second reports; fractional timestamps keep all source precision, even though OCSF's
+`time` field has milliseconds. The on-Mac hook adds a fresh random transition identity before
+queuing each observed membership change, so a frozen or repeated clock value cannot merge
+separate changes. Sending a queued record again preserves its stored ID.
+
+The version 2 identity introduced after relay and hook 0.1.0 changes newly generated IDs.
+Existing spool files keep their IDs and remain deliverable, and the ID fields stay UUID
+strings in OCSF, Sentinel and CEF. A webhook first processed by 0.1.0 and resent after the
+upgrade may reach the SIEM once with its old ID and once with its new ID. Plan deduplication
+around this upgrade boundary; no SIEM schema or detection-query change is needed.
 
 Run one relay per spool. Two relays sharing a spool directory would send the same events
 twice.

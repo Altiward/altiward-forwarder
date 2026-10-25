@@ -84,14 +84,14 @@ func paths(m map[string]any, prefix string) []string {
 
 func TestUIDStable(t *testing.T) {
 	a, b := event(t, "grant-with-reason"), event(t, "grant-with-reason")
-	if ocsf.UID(a) != ocsf.UID(b) {
+	if ocsf.UID(a, webhook) != ocsf.UID(b, webhook) {
 		t.Fatal("the same event gave two UIDs")
 	}
 	b.User = "someone"
-	if ocsf.UID(a) == ocsf.UID(b) {
+	if ocsf.UID(a, webhook) == ocsf.UID(b, webhook) {
 		t.Fatal("a different user gave the same UID")
 	}
-	if got := get(asJSON(t, ocsf.FromPrivileges(a, webhook)), "metadata.uid"); got != ocsf.UID(a) {
+	if got := get(asJSON(t, ocsf.FromPrivileges(a, webhook)), "metadata.uid"); got != ocsf.UID(a, webhook) {
 		t.Fatalf("metadata.uid %v", got)
 	}
 }

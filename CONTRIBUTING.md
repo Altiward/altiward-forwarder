@@ -9,18 +9,25 @@ You need Go 1.27 or later. The forwarder's only dependency outside the standard 
 the SIEM client module from the main Altiward repository,
 `github.com/Altiward/altiward/integrations`, and `make deps-check` keeps it that way.
 
+The released SIEM clients are vendored with a reviewed Splunk acknowledgement fix. CI,
+Docker and hook packages build that copy. Keep the patch and the two pinned contract
+fixtures when refreshing `vendor/`; the standalone delivery regressions must pass.
+
 To work on the forwarder and the SIEM clients together, check out
 [Altiward/altiward](https://github.com/Altiward/altiward) next to this repository and add a
 `go.work` here (it's git-ignored):
 
 ```
-go 1.25.0
+go 1.27.0
 
 use (
 	.
 	../altiward/integrations
 )
 ```
+
+Run coordinated checks with `GOWORK="$PWD/go.work" make lint test deps-check`. Run the
+standalone release checks below as well, because a workspace bypasses the vendored patch.
 
 ## Checks
 

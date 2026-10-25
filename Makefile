@@ -1,3 +1,7 @@
+# Releases use the reviewed vendored SIEM clients. Override GOWORK explicitly only for
+# coordinated development with a sibling integrations checkout.
+export GOWORK ?= off
+
 .PHONY: help lint test deps-check vulncheck hook hook-verify
 
 help: ## List targets

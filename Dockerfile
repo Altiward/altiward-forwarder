@@ -6,9 +6,8 @@ FROM golang:1.27-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c
 ARG VERSION=dev
 WORKDIR /src
 COPY go.mod go.sum* ./
-RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.version=${VERSION}" \
+RUN CGO_ENABLED=0 go build -mod=vendor -trimpath -ldflags="-s -w -X main.version=${VERSION}" \
       -o /out/altiward-forwarder ./cmd/altiward-forwarder \
  && mkdir -p /out/spool
 

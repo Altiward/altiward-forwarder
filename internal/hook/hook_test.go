@@ -165,6 +165,43 @@ func TestQueuesWhenOffline(t *testing.T) {
 	}
 }
 
+func TestFrozenClockTransitionsAreDistinctAndFlushKeepsTheirIDs(t *testing.T) {
+	s := &fakeSink{name: "splunk", failAll: true}
+	f := newFake(t, s)
+	for _, admin := range []bool{true, false, true} {
+		f.admin = []bool{admin}
+		state := map[bool]string{true: "admin", false: "user"}[admin]
+		if code := hook.Run([]string{"jdoe", state, "same reason"}, f.env()); code != 0 {
+			t.Fatalf("exit %d: %s", code, f.err.String())
+		}
+	}
+	queued := f.queued(t, "splunk")
+	if len(queued) != 3 {
+		t.Fatalf("%d queued at one timestamp, want 3", len(queued))
+	}
+	want := map[string]bool{}
+	for _, path := range queued {
+		want[strings.TrimSuffix(filepath.Base(path), ".json")] = true
+	}
+	s.failAll = false
+	if code := hook.Flush(f.env()); code != 0 {
+		t.Fatalf("flush exit %d: %s", code, f.err.String())
+	}
+	if len(s.got) != 3 {
+		t.Fatalf("flushed %d events, want 3", len(s.got))
+	}
+	for _, rec := range s.got {
+		uid := ocsf.Str(rec, "metadata", "uid")
+		if !want[uid] {
+			t.Fatalf("flush changed UID to %s", uid)
+		}
+		delete(want, uid)
+	}
+	if len(want) != 0 || len(f.queued(t, "splunk")) != 0 {
+		t.Fatal("flush did not deliver all original queued identities")
+	}
+}
+
 func TestQueueCapDropsOldest(t *testing.T) {
 	s := &fakeSink{name: "splunk", failAll: true}
 	f := newFake(t, s)

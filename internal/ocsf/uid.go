@@ -3,6 +3,7 @@ package ocsf
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"time"
 
 	"github.com/Altiward/altiward-forwarder/internal/privileges"
@@ -12,14 +13,39 @@ import (
 // resent events by metadata.uid.
 var uidNamespace = mustUUID("36b137d3-b12a-425c-9a5e-88aa29c98cbd")
 
-// UID names a change the same way however often Privileges sends it, so a resend after a
-// lost response is one event in the SIEM.
-func UID(e privileges.Event) string {
-	event := "corp.sap.privileges.revoked"
-	if e.Granted {
-		event = "corp.sap.privileges.granted"
+// UID names a change the same way however often Privileges sends it. The versioned,
+// structured name preserves source precision and separates configured sites without using
+// their secrets. Delayed, receipt time and product version can change on a retry.
+func UID(e privileges.Event, m Meta) string {
+	expires := ""
+	if e.Expires != nil {
+		expires = identityTime(*e.Expires, e.ExpiresFractionTail)
 	}
-	return uuid5(uidNamespace, e.Machine+"|"+event+"|"+e.At.UTC().Format(time.RFC3339)+"|"+e.User)
+	identity := struct {
+		Version                         int
+		Via                             Via
+		Tenant, URLSecret               string
+		Machine, Serial, User           string
+		Granted                         bool
+		At, Expires, Reason, Transition string
+		Custom                          map[string]any
+	}{
+		Version: 2, Via: m.Via, Tenant: m.TenantUID, URLSecret: m.URLSecretName,
+		Machine: e.Machine, Serial: e.Serial, User: e.User, Granted: e.Granted,
+		At: identityTime(e.At, e.AtFractionTail), Expires: expires, Reason: e.Reason,
+		Transition: e.TransitionID, Custom: e.Custom,
+	}
+	// Custom comes from the JSON decoder (or is nil for the hook), so it contains only
+	// JSON values. Marshal sorts object keys, keeping reordered webhook retries stable.
+	name, _ := json.Marshal(identity)
+	return uuid5(uidNamespace, string(name))
+}
+
+func identityTime(at time.Time, fractionTail string) string {
+	if fractionTail == "" {
+		return at.UTC().Format(time.RFC3339Nano)
+	}
+	return at.UTC().Format("2006-01-02T15:04:05.000000000") + fractionTail + "Z"
 }
 
 // uuid5 is RFC 9562's name-based UUID (section 5.5), using SHA-1.

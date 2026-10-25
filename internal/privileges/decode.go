@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -29,9 +30,13 @@ type Event struct {
 	Expires               *time.Time // nil when Privileges reports no expiry
 	Delayed               bool       // Privileges queued the event and sent it later
 	Custom                map[string]any
+	// RFC 3339 permits more fractional digits than time.Time retains. Keep the
+	// non-zero tail beyond nanoseconds for identity without rounding accepted input.
+	AtFractionTail, ExpiresFractionTail string
 
 	// Set by the on-Mac hook, which can read them; the webhook doesn't send them.
 	Serial, Hostname, OSVersion string
+	TransitionID                string // generated once per observed hook change, before queuing
 }
 
 type body struct {
@@ -87,6 +92,7 @@ func Decode(data []byte) (Event, error) {
 			return Event{}, fmt.Errorf(`privileges: "expires": %w`, err)
 		}
 		e.Expires = &exp
+		e.ExpiresFractionTail = fractionTail(b.Expires)
 	}
 	if len(b.Custom) > 0 {
 		// Numbers stay as written: an asset or ticket ID can be too large for a float64.
@@ -98,5 +104,22 @@ func Decode(data []byte) (Event, error) {
 		}
 	}
 	e.User, e.Machine, e.Reason, e.At, e.Delayed = b.User, b.Machine, b.Reason, at, b.Delayed
+	e.AtFractionTail = fractionTail(b.Timestamp)
 	return e, nil
+}
+
+// fractionTail is called only after time.Parse accepted an RFC 3339 timestamp.
+func fractionTail(source string) string {
+	fractionStart := strings.IndexAny(source, ".,") + 1
+	if fractionStart == 0 {
+		return ""
+	}
+	end := fractionStart
+	for end < len(source) && source[end] >= '0' && source[end] <= '9' {
+		end++
+	}
+	if end-fractionStart <= 9 {
+		return ""
+	}
+	return strings.TrimRight(source[fractionStart+9:end], "0")
 }

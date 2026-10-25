@@ -31,7 +31,7 @@ case "$OUT" in "$HOME/Documents"*|"$HOME/Library/Mobile Documents"*)
 echo "== building $VERSION (arm64 and x86_64)"
 rm -rf "$OUT" && mkdir -p "$OUT/arch"
 for arch in arm64 amd64; do
-  (cd "$REPO" && CGO_ENABLED=0 GOOS=darwin GOARCH="$arch" go build -trimpath \
+  (cd "$REPO" && CGO_ENABLED=0 GOOS=darwin GOARCH="$arch" GOWORK=off go build -mod=vendor -trimpath \
     -ldflags "-s -w -X main.version=$VERSION" -o "$OUT/arch/$BIN_NAME-$arch" ./cmd/altiward-forwarder-hook)
 done
 
