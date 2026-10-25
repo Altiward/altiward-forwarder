@@ -9,6 +9,7 @@ package hook
 
 import (
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -124,9 +125,10 @@ func Run(args []string, env Env) int {
 	e := privileges.Event{
 		Granted: actual, User: user, Reason: reason, At: start,
 		Machine: facts.HardwareUUID, Serial: facts.Serial, Hostname: facts.Hostname, OSVersion: facts.OSVersion,
+		TransitionID: rand.Text(),
 	}
 	rec := ocsf.FromPrivileges(e, ocsf.Meta{Via: ocsf.ViaHook, ReceivedAt: start, ProductVersion: env.Version})
-	uid := ocsf.UID(e)
+	uid := ocsf.Str(rec, "metadata", "uid")
 
 	// Queue first, and remove after a good send: if the hook is stopped mid-send, the event is
 	// still there for --flush. A queue may briefly hold QueueMax+1; it's trimmed after a failure.

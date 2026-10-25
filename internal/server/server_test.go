@@ -96,6 +96,77 @@ func TestAcceptsAndSpools(t *testing.T) {
 	}
 }
 
+func TestDistinctSourceEventsSurviveAcceptedInputAndRetries(t *testing.T) {
+	sp := spools(t, 20, "splunk")
+	h := server.Handler(options(t, sp))
+	var source map[string]any
+	if err := json.Unmarshal(body(t, "grant-with-reason"), &source); err != nil {
+		t.Fatal(err)
+	}
+	variants := []struct{ at, reason, expires, ticket string }{
+		{"2026-10-25T12:00:00.100Z", "reason", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:00.900Z", "reason", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:00.1000000001Z", "reason", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:00.1000000002Z", "reason", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:00.100Z", "reason", "2026-10-25T12:05:00.0000000001Z", "1"},
+		{"2026-10-25T12:00:00.100Z", "reason", "2026-10-25T12:05:00.0000000002Z", "1"},
+		{"2026-10-25T12:00:01Z", "first", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:01Z", "second", "2026-10-25T12:05:00Z", "1"},
+		{"2026-10-25T12:00:01Z", "second", "2026-10-25T12:06:00Z", "1"},
+		{"2026-10-25T12:00:01Z", "second", "2026-10-25T12:06:00Z", "2"},
+	}
+	for i, v := range variants {
+		source["timestamp"], source["reason"], source["expires"] = v.at, v.reason, v.expires
+		source["custom_data"] = map[string]any{"ticket": v.ticket}
+		for _, delayed := range []bool{false, true} {
+			source["delayed"] = delayed
+			b, err := json.Marshal(source)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if rec := post(t, h, b); rec.Code != http.StatusAccepted {
+				t.Fatalf("event %d: status %d: %s", i, rec.Code, rec.Body)
+			}
+		}
+	}
+	items, err := sp[0].Oldest(20)
+	if err != nil || len(items) != len(variants) {
+		t.Fatalf("queued %d events, want %d: %v", len(items), len(variants), err)
+	}
+}
+
+func TestURLSecretScopesKeepIndependentCopiesAndRotationKeepsRetry(t *testing.T) {
+	o := secretOptions(t)
+	h := server.Handler(o)
+	postSecret := func(h http.Handler, secret string) string {
+		t.Helper()
+		req := httptest.NewRequest(http.MethodPost, "/v1/privileges/"+secret, bytes.NewReader(body(t, "grant-with-reason")))
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, req)
+		if rec.Code != http.StatusAccepted {
+			t.Fatalf("status %d: %s", rec.Code, rec.Body)
+		}
+		var response struct{ UID string }
+		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+			t.Fatal(err)
+		}
+		return response.UID
+	}
+	london := postSecret(h, londonSecret)
+	paris := postSecret(h, parisSecret)
+	if london == paris {
+		t.Fatal("independent sites shared a UID")
+	}
+	rotated := strings.Repeat("r", 32)
+	o.URLSecrets["london"] = rotated
+	if got := postSecret(server.Handler(o), rotated); got != london {
+		t.Fatalf("rotating a secret under the same site name changed retry UID: %s", got)
+	}
+	if n, err := o.Spools[0].Len(); err != nil || n != 2 {
+		t.Fatalf("queued %d, want 2: %v", n, err)
+	}
+}
+
 func TestMethodNotAllowed(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/v1/privileges", nil)
 	rec := httptest.NewRecorder()

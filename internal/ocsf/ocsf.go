@@ -45,7 +45,7 @@ func FromPrivileges(e privileges.Event, m Meta) Record {
 
 	metadata := map[string]any{
 		"version":     Version,
-		"uid":         UID(e),
+		"uid":         UID(e, m),
 		"logged_time": m.ReceivedAt.UnixMilli(),
 		"product":     map[string]any{"name": "Altiward Forwarder", "vendor_name": "Altiward", "version": m.ProductVersion},
 	}

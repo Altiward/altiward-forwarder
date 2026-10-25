@@ -5,6 +5,23 @@ hook (`altiward-forwarder-hook`, released as `hook-vX.Y.Z`). A release needs its
 (`## Relay X.Y.Z - YYYY-MM-DD`) with a `### Changes` heading; `scripts/release-notes.sh`
 checks.
 
+## Relay 0.1.1 - unreleased
+
+### Changes
+
+- Event identifiers preserve subsecond timestamps, separate configured sites and distinguish
+  changes in reason, expiry or custom data within a whole second. Exact retries still share
+  an identifier, including delayed delivery. Newly generated identifiers change after the
+  upgrade; queued records retain their identifiers. See [delivery](docs/design.md#delivery)
+  for SIEM deduplication at the upgrade boundary and the limit for identical webhook reports.
+
+## Hook 0.1.1 - unreleased
+
+### Changes
+
+- Every observed membership transition receives its own identity before queuing, so repeated
+  clock values cannot merge separate changes. Resending a queued record retains its identity.
+
 ## Relay 0.1.0 - 2026-10-21
 
 ### Changes
