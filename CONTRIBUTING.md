@@ -44,6 +44,27 @@ make lint test deps-check
 Tests that touch Privileges' webhook use the bodies in `testdata/privileges-2.6/`. Add a new
 body there when Privileges changes what it sends.
 
+## Releasing
+
+Relay and hook releases are separate. Date the relevant `Relay X.Y.Z` or `Hook X.Y.Z`
+section in `CHANGELOG.md` on the actual release day, and run `make lint test deps-check
+vulncheck` before releasing. `scripts/release-notes.sh relay X.Y.Z` (or `hook X.Y.Z`)
+checks and prints the notes. The relay's `vX.Y.Z` tag runs
+[release.yml](.github/workflows/release.yml); the hook's `hook-vX.Y.Z` tag runs
+[release-hook.yml](.github/workflows/release-hook.yml). A maintainer approves the relevant
+release environment before signing and publication.
+
+After publication, verify the downloaded assets against the release's signed checksums
+and the expected repository, workflow and tag identity. For the hook, also verify the
+package's Developer ID signature and notarisation, and use the checksum profile from
+that same release when deploying it through MDM.
+
+Then open a pull request in [Altiward/altiward.com](https://github.com/Altiward/altiward.com)
+to update the forwarder version, release date and tag links in the "Is it released?"
+row of `assurance/index.html`. Check the relay and hook separately if their published versions
+differ. Use only verified published releases, and keep release candidates out of this
+row. A documentation or assurance change alone does not require a new forwarder release.
+
 ## Write it yourself
 
 Build only from SAP Privileges' own source and documentation, which are Apache 2.0, and from
