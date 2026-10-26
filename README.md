@@ -1,5 +1,7 @@
 # altiward-forwarder
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Altiward/altiward-forwarder/badge)](https://scorecard.dev/viewer/?uri=github.com/Altiward/altiward-forwarder)
+
 Forward SAP Privileges events to Splunk, Sentinel or syslog, from a relay or straight from the
 Mac. Works with SAP Privileges.
 
