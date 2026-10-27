@@ -5,7 +5,7 @@ hook (`altiward-forwarder-hook`, released as `hook-vX.Y.Z`). A release needs its
 (`## Relay X.Y.Z - YYYY-MM-DD`) with a `### Changes` heading; `scripts/release-notes.sh`
 checks.
 
-## Relay 1.0.0 - unreleased
+## Relay 1.0.0 - 2026-10-27
 
 ### Changes
 
@@ -26,7 +26,7 @@ checks.
   upgrade; queued records retain their identifiers. See [delivery](docs/design.md#delivery)
   for SIEM deduplication at the upgrade boundary and the limit for identical webhook reports.
 
-## Hook 1.0.0 - unreleased
+## Hook 1.0.0 - 2026-10-27
 
 ### Changes
 
