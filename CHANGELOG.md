@@ -5,6 +5,13 @@ hook (`altiward-forwarder-hook`, released as `hook-vX.Y.Z`). A release needs its
 (`## Relay X.Y.Z - YYYY-MM-DD`) with a `### Changes` heading; `scripts/release-notes.sh`
 checks.
 
+## Relay 1.0.0 - 2026-10-27
+
+### Changes
+
+- The version moves from 0.9.0 to 1.0.0 in step with Altiward server, agent and
+  altiward-siem 1.0.0, with no change in behaviour.
+
 ## Relay 0.9.0 - 2026-10-27
 
 ### Changes
@@ -18,6 +25,13 @@ checks.
   an identifier, including delayed delivery. Newly generated identifiers change after the
   upgrade; queued records retain their identifiers. See [delivery](docs/design.md#delivery)
   for SIEM deduplication at the upgrade boundary and the limit for identical webhook reports.
+
+## Hook 1.0.0 - 2026-10-27
+
+### Changes
+
+- The version moves from 0.9.0 to 1.0.0 in step with Altiward server, agent and
+  altiward-siem 1.0.0, with no change in behaviour.
 
 ## Hook 0.9.0 - 2026-10-27
 
