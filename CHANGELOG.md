@@ -5,10 +5,12 @@ hook (`altiward-forwarder-hook`, released as `hook-vX.Y.Z`). A release needs its
 (`## Relay X.Y.Z - YYYY-MM-DD`) with a `### Changes` heading; `scripts/release-notes.sh`
 checks.
 
-## Relay 0.1.1 - unreleased
+## Relay 0.9.0 - 2026-10-27
 
 ### Changes
 
+- The version moves from 0.1.0 to 0.9.0 to match Altiward server, agent and altiward-siem
+  0.9.0. Nothing else follows from the jump.
 - Splunk delivery requires an explicit accepted HEC acknowledgement. Redirects, HTML,
   incomplete or invalid responses leave records queued and report a delivery error.
 - Event identifiers preserve subsecond timestamps, separate configured sites and distinguish
@@ -17,10 +19,12 @@ checks.
   upgrade; queued records retain their identifiers. See [delivery](docs/design.md#delivery)
   for SIEM deduplication at the upgrade boundary and the limit for identical webhook reports.
 
-## Hook 0.1.1 - unreleased
+## Hook 0.9.0 - 2026-10-27
 
 ### Changes
 
+- The version moves from 0.1.0 to 0.9.0 to match Altiward server, agent and altiward-siem
+  0.9.0. Nothing else follows from the jump.
 - Splunk delivery requires an explicit accepted HEC acknowledgement. Redirects, HTML,
   incomplete or invalid responses leave records queued and report a delivery error.
 - Every observed membership transition receives its own identity before queuing, so repeated
