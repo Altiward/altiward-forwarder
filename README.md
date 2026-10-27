@@ -12,8 +12,8 @@ SIEM an OCSF record: the same record the [Altiward](https://github.com/Altiward/
 emits for that change. So the [altiward-siem](https://github.com/Altiward/altiward-siem)
 detections, the Sentinel workbook and the Splunk dashboard work with both.
 
-**Status:** 0.9.0, the latest [release](https://github.com/Altiward/altiward-forwarder/releases)
-of both the relay (`v0.9.0`) and the hook (`hook-v0.9.0`).
+**Status:** 1.0.0, the latest [release](https://github.com/Altiward/altiward-forwarder/releases)
+of both the relay (`v1.0.0`) and the hook (`hook-v1.0.0`).
 
 ## Choose how to forward
 
@@ -46,7 +46,7 @@ of both the relay (`v0.9.0`) and the hook (`hook-v0.9.0`).
    certificates in `certs/` and a `.env` naming the version and your SIEM:
 
    ```sh
-   FORWARDER_VERSION=0.9.0
+   FORWARDER_VERSION=1.0.0
    FORWARDER_SPLUNK_HEC_URL=https://splunk.example.com:8088
    FORWARDER_SPLUNK_HEC_TOKEN=…
    ```

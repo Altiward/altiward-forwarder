@@ -1,5 +1,5 @@
 # The relay: one static Go binary on distroless, running as nonroot (uid 65532).
-# docker build --build-arg VERSION=0.9.0 -t altiward-forwarder .
+# docker build --build-arg VERSION=1.0.0 -t altiward-forwarder .
 
 # Base images are pinned by digest; Dependabot proposes updates.
 FROM golang:1.27-alpine@sha256:f2c872bcee949b7be9c490efd02b48a8a2fbf947cdf533f1c58525ec9d8170fd AS build
