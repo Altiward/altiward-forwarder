@@ -53,12 +53,6 @@ whole-second reports; fractional timestamps keep all source precision, even thou
 queuing each observed membership change, so a frozen or repeated clock value cannot merge
 separate changes. Sending a queued record again preserves its stored ID.
 
-The version 2 identity introduced in relay and hook 0.9.0 changes newly generated IDs.
-Existing spool files keep their IDs and remain deliverable, and the ID fields stay UUID
-strings in OCSF, Sentinel and CEF. A webhook first processed by 0.1.0 and resent after the
-upgrade may reach the SIEM once with its old ID and once with its new ID. Plan deduplication
-around this upgrade boundary; no SIEM schema or detection-query change is needed.
-
 Run one relay per spool. Two relays sharing a spool directory would send the same events
 twice.
 
